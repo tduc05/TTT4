@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe four</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 36px;
+      color: #009dff;
+    }
+
+    .status {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 2px solid #000;
+      font-size: 24px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 15px;
+    }
+
+    .square {
+      width: 100px;
+      height: 100px;
+      border: 2px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .square:hover {
+      background-color: rgb(148, 185, 226);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 2px solid #000;
+      font-size: 24px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tic Tac Toe! LETS GOO</h1>
+
+  <div class="status">Turn: </div>
+
+  <div class="board" id="board">
+    <script>
+      const NUM_SQUARES = 9;
+      for (let i = 0; i < NUM_SQUARES; i++) {
+        let id = "sq" + i;
+        document.write("<div class='square' id='" + id + "'></div>");
+      }
+    </script>
+  </div>
+
+  <div class="result">No winner yet</div>
+
+  <button onclick="startGame()">Start Game</button>
+
+  <script>
+    let currentPlayer;
+    let gameBoard = Array(NUM_SQUARES).fill(null); 
+    const squares = document.querySelectorAll('.square');
+    const statusDisplay = document.querySelector('.status');
+    const resultDisplay = document.querySelector('.result');
+    let gameActive = true;
+
+    
+    const winConditions = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6] 
+    ];
+
+    function chooseStartingPlayer() {
+      currentPlayer = Math.random() > 0.5 ? 'X' : 'O';
+      statusDisplay.textContent = `Turn: ${currentPlayer}`;
+    }
+
+   
+    squares.forEach((square, index) => {
+      square.addEventListener('click', function() {
+        if (gameBoard[index] === null && gameActive) { 
+          gameBoard[index] = currentPlayer;
+          square.textContent = currentPlayer;
+
+          alert(`You clicked square ${index}`);
+
+    
+          checkGameStatus();
+
+
+          currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+          if (gameActive) statusDisplay.textContent = `Turn: ${currentPlayer}`;
+        }
+      });
+    });
+
+
+    function startGame() {
+      gameBoard.fill(null); 
+      squares.forEach(square => {
+        square.textContent = ''; 
+      });
+      resultDisplay.textContent = "No winner yet";
+      gameActive = true;
+      chooseStartingPlayer(); 
+    }
+
+
+    function checkGameStatus() {
+      let moves = []; 
+      squares.forEach((square, index) => {
+        moves[index] = square.innerText === '' ? '-' : square.innerText;
+      });
+
+      
+      const winPatterns = winConditions.map(condition => {
+        return condition.map(index => moves[index]).join('');
+      });
+
+      
+      let winner = winPatterns.find(pattern => pattern === 'XXX' || pattern === 'OOO');
+
+      if (winner) {
+        resultDisplay.textContent = `${winner[0]} wins!`;
+        gameActive = false;
+      } else if (!moves.includes('-')) { 
+        resultDisplay.textContent = "stalemate";
+        gameActive = false;
+      }
+    }
+
+  
+    startGame();
+  </script>
+
+</body>
+</html>
